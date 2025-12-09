@@ -1,20 +1,22 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib/core';
+import * as cdk from 'aws-cdk-lib';
 import { CdkMultiEnvDemoStack } from '../lib/cdk-multi-env-demo-stack';
+import { PipelineStack } from '../lib/pipeline-stack';
 
 const app = new cdk.App();
-new CdkMultiEnvDemoStack(app, 'CdkMultiEnvDemoStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+// Define three environments
+const devEnv = { account: process.env.CDK_DEV_ACCT, region: 'us-east-2' };
+const stageEnv = { account: process.env.CDK_STAGE_ACCT, region: 'us-west-1' };
+const prodEnv = { account: process.env.CDK_PROD_ACCT, region: 'us-west-2' };
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+new CdkMultiEnvDemoStack(app, 'DemoStack-Dev', { env: devEnv });
+new CdkMultiEnvDemoStack(app, 'DemoStack-Stage', { env: stageEnv });
+new CdkMultiEnvDemoStack(app, 'DemoStack-Prod', { env: prodEnv });
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+new PipelineStack(app, 'PipelineStack', {
+  env: {
+    account: process.env.CDK_DEV_ACCT,
+    region: 'us-east-2',
+  }
+})
