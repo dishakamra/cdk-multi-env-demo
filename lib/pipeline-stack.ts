@@ -10,7 +10,7 @@ export class PipelineStack extends cdk.Stack {
     const pipeline = new CodePipeline(this, "Pipeline", {
       pipelineName: "MultiEnvPipeline",
       synth: new ShellStep("Synth", {
-        input: CodePipelineSource.gitHub("your/repo", "main"),
+        input: CodePipelineSource.gitHub("dishakamra/cdk-multi-env-demo", "master"),
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
     });
